@@ -60,6 +60,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       "/dashboard/promos": "Promo & Loyalty",
       "/dashboard/analytics": "Laporan & Analitik",
       "/dashboard/settings": "Pengaturan",
+      "/dashboard/management/stylists": "Manajemen Stylist",
+      "/dashboard/management/services": "Manajemen Layanan",
+      "/dashboard/management/bookings": "Manajemen Booking",
     };
 
     return titleMap[path] || "Dashboard";

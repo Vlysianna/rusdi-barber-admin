@@ -114,7 +114,7 @@ class ServiceService {
    */
   async updateService(id: string, data: UpdateServiceData): Promise<Service> {
     try {
-      const response = await apiService.patch<Service>(`/services/${id}`, data);
+      const response = await apiService.put<Service>(`/services/${id}`, data);
 
       if (!response.success || !response.data) {
         throw new Error(response.message || "Failed to update service");
@@ -182,10 +182,14 @@ class ServiceService {
    */
   async getServicesByCategory(category: string): Promise<Service[]> {
     try {
-      const response = await apiService.get<Service[]>(`/services/category/${category}`);
+      const response = await apiService.get<Service[]>(
+        `/services/category/${category}`,
+      );
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to fetch services by category");
+        throw new Error(
+          response.message || "Failed to fetch services by category",
+        );
       }
 
       return response.data;
@@ -197,14 +201,18 @@ class ServiceService {
   /**
    * Get service categories
    */
-  async getServiceCategories(): Promise<{ value: string; label: string; count: number }[]> {
+  async getServiceCategories(): Promise<
+    { value: string; label: string; count: number }[]
+  > {
     try {
-      const response = await apiService.get<{ value: string; label: string; count: number }[]>(
-        "/services/categories"
-      );
+      const response = await apiService.get<
+        { value: string; label: string; count: number }[]
+      >("/services/categories");
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to fetch service categories");
+        throw new Error(
+          response.message || "Failed to fetch service categories",
+        );
       }
 
       return response.data;
@@ -219,16 +227,18 @@ class ServiceService {
   async getServiceAnalytics(
     id: string,
     dateFrom?: string,
-    dateTo?: string
+    dateTo?: string,
   ): Promise<ServiceAnalytics> {
     try {
       const response = await apiService.get<ServiceAnalytics>(
         `/services/${id}/analytics`,
-        { dateFrom, dateTo }
+        { dateFrom, dateTo },
       );
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to fetch service analytics");
+        throw new Error(
+          response.message || "Failed to fetch service analytics",
+        );
       }
 
       return response.data;
@@ -242,9 +252,12 @@ class ServiceService {
    */
   async updateServiceStatus(id: string, isActive: boolean): Promise<Service> {
     try {
-      const response = await apiService.patch<Service>(`/services/${id}/status`, {
-        isActive,
-      });
+      const response = await apiService.patch<Service>(
+        `/services/${id}/status`,
+        {
+          isActive,
+        },
+      );
 
       if (!response.success || !response.data) {
         throw new Error(response.message || "Failed to update service status");
@@ -261,10 +274,14 @@ class ServiceService {
    */
   async toggleServicePopularity(id: string): Promise<Service> {
     try {
-      const response = await apiService.post<Service>(`/services/${id}/toggle-popular`);
+      const response = await apiService.post<Service>(
+        `/services/${id}/toggle-popular`,
+      );
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to toggle service popularity");
+        throw new Error(
+          response.message || "Failed to toggle service popularity",
+        );
       }
 
       return response.data;
@@ -288,7 +305,7 @@ class ServiceService {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       if (!response.success || !response.data) {
@@ -307,7 +324,7 @@ class ServiceService {
   async getServiceReviews(
     id: string,
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<{
     reviews: any[];
     total: number;
@@ -335,10 +352,14 @@ class ServiceService {
    */
   async getServicesByStylist(stylistId: string): Promise<Service[]> {
     try {
-      const response = await apiService.get<Service[]>(`/services/stylist/${stylistId}`);
+      const response = await apiService.get<Service[]>(
+        `/services/stylist/${stylistId}`,
+      );
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to fetch services by stylist");
+        throw new Error(
+          response.message || "Failed to fetch services by stylist",
+        );
       }
 
       return response.data;
@@ -359,10 +380,14 @@ class ServiceService {
     currentPrice: string;
   }> {
     try {
-      const response = await apiService.get<any>(`/services/${id}/pricing-history`);
+      const response = await apiService.get<any>(
+        `/services/${id}/pricing-history`,
+      );
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to fetch service pricing history");
+        throw new Error(
+          response.message || "Failed to fetch service pricing history",
+        );
       }
 
       return response.data;
@@ -376,13 +401,16 @@ class ServiceService {
    */
   async bulkUpdateServices(
     serviceIds: string[],
-    updates: Partial<UpdateServiceData>
+    updates: Partial<UpdateServiceData>,
   ): Promise<Service[]> {
     try {
-      const response = await apiService.patch<Service[]>("/services/bulk-update", {
-        serviceIds,
-        updates,
-      });
+      const response = await apiService.patch<Service[]>(
+        "/services/bulk-update",
+        {
+          serviceIds,
+          updates,
+        },
+      );
 
       if (!response.success || !response.data) {
         throw new Error(response.message || "Failed to bulk update services");
@@ -400,20 +428,25 @@ class ServiceService {
   async getServiceAvailability(
     serviceId: string,
     date: string,
-    time: string
+    time: string,
   ): Promise<{
     isAvailable: boolean;
     availableStylists: any[];
     nextAvailableSlot?: string;
   }> {
     try {
-      const response = await apiService.get<any>(`/services/${serviceId}/availability`, {
-        date,
-        time,
-      });
+      const response = await apiService.get<any>(
+        `/services/${serviceId}/availability`,
+        {
+          date,
+          time,
+        },
+      );
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to check service availability");
+        throw new Error(
+          response.message || "Failed to check service availability",
+        );
       }
 
       return response.data;
@@ -427,12 +460,17 @@ class ServiceService {
    */
   async getRecommendedServices(customerId?: string): Promise<Service[]> {
     try {
-      const response = await apiService.get<Service[]>("/services/recommended", {
-        customerId,
-      });
+      const response = await apiService.get<Service[]>(
+        "/services/recommended",
+        {
+          customerId,
+        },
+      );
 
       if (!response.success || !response.data) {
-        throw new Error(response.message || "Failed to fetch recommended services");
+        throw new Error(
+          response.message || "Failed to fetch recommended services",
+        );
       }
 
       return response.data;
@@ -446,11 +484,15 @@ class ServiceService {
    */
   async exportServices(format: "csv" | "excel" = "csv"): Promise<Blob> {
     try {
-      const response = await apiService.get(`/services/export`, {
-        format,
-      }, {
-        responseType: "blob",
-      });
+      const response = await apiService.get(
+        `/services/export`,
+        {
+          format,
+        },
+        {
+          responseType: "blob",
+        },
+      );
 
       if (!response.data) {
         throw new Error("Failed to export services data");

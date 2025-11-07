@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Users,
   Calendar,
@@ -18,6 +19,7 @@ import { healthService } from "../services/healthService";
 import type { DashboardStats } from "../types";
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -307,7 +309,9 @@ const Dashboard: React.FC = () => {
                 </p>
                 <div className="flex items-center space-x-2">
                   <p className="text-2xl font-bold text-gray-900">
-                    {stats.averageRating
+                    {stats?.averageRating &&
+                    typeof stats.averageRating === "number" &&
+                    !isNaN(stats.averageRating)
                       ? stats.averageRating.toFixed(1)
                       : "0.0"}
                   </p>
@@ -432,44 +436,7 @@ const Dashboard: React.FC = () => {
             </h3>
           </Card.Header>
           <Card.Body>
-            <div className="space-y-4">
-              {stats.topStylists?.map((stylist, index) => (
-                <div key={stylist.id} className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                      {stylist.avatar ? (
-                        <img
-                          src={stylist.avatar}
-                          alt={stylist.name}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-primary-600 font-medium">
-                          {stylist.name.charAt(0)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {stylist.name}
-                    </p>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span>{stylist.rating.toFixed(1)}</span>
-                      <span>•</span>
-                      <span>{stylist.totalBookings} booking</span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900">
-                      {formatCurrency(stylist.revenue)}
-                    </p>
-                    <p className="text-xs text-gray-500">#{index + 1}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className="space-y-4"></div>
           </Card.Body>
         </Card>
 
@@ -480,54 +447,64 @@ const Dashboard: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Booking Terbaru
               </h3>
-              <Button variant="ghost" size="sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/dashboard/bookings")}
+              >
                 Lihat Semua
               </Button>
             </div>
           </Card.Header>
           <Card.Body>
             <div className="space-y-4">
-              {stats.recentBookings?.slice(0, 5).map((booking) => (
-                <div key={booking.id} className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                      {booking.customer.avatar ? (
-                        <img
-                          src={booking.customer.avatar}
-                          alt={booking.customer.fullName}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <Users className="w-5 h-5 text-gray-500" />
-                      )}
+              {stats?.recentBookings && Array.isArray(stats.recentBookings) ? (
+                stats.recentBookings.slice(0, 5).map((booking) => (
+                  <div key={booking.id} className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        {booking.customer.avatar ? (
+                          <img
+                            src={booking.customer.avatar}
+                            alt={booking.customer.fullName}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <Users className="w-5 h-5 text-gray-500" />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {booking.customer.fullName}
+                      </p>
+                      <p className="text-sm text-gray-500 truncate">
+                        {booking.service.name} • {booking.stylist.user.fullName}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(booking.bookingDate).toLocaleDateString(
+                          "id-ID",
+                        )}{" "}
+                        {booking.startTime}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}
+                      >
+                        {booking.status.replace("_", " ")}
+                      </span>
+                      <p className="text-sm font-medium text-gray-900 mt-1">
+                        {formatCurrency(booking.totalPrice)}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {booking.customer.fullName}
-                    </p>
-                    <p className="text-sm text-gray-500 truncate">
-                      {booking.service.name} • {booking.stylist.user.fullName}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {new Date(booking.bookingDate).toLocaleDateString(
-                        "id-ID",
-                      )}{" "}
-                      {booking.startTime}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}
-                    >
-                      {booking.status.replace("_", " ")}
-                    </span>
-                    <p className="text-sm font-medium text-gray-900 mt-1">
-                      {formatCurrency(booking.totalPrice)}
-                    </p>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-500">
+                  <p>No recent bookings available</p>
                 </div>
-              ))}
+              )}
             </div>
           </Card.Body>
         </Card>

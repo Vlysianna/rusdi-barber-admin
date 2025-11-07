@@ -49,7 +49,9 @@ const StylistManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
+  const [filterStatus, setFilterStatus] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStylist, setSelectedStylist] = useState<Stylist | null>(null);
@@ -247,7 +249,9 @@ const StylistManagement: React.FC = () => {
       });
       await loadStylists();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update availability");
+      setError(
+        err instanceof Error ? err.message : "Failed to update availability",
+      );
     }
   };
 
@@ -257,12 +261,18 @@ const StylistManagement: React.FC = () => {
       return;
     }
 
-    if (window.confirm(`Are you sure you want to delete ${stylist.user.fullName}?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete ${stylist.user.fullName}?`,
+      )
+    ) {
       try {
         await stylistService.deleteStylist(stylist.id);
         await loadStylists();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to delete stylist");
+        setError(
+          err instanceof Error ? err.message : "Failed to delete stylist",
+        );
       }
     }
   };
@@ -279,7 +289,9 @@ const StylistManagement: React.FC = () => {
   const renderStylistModal = (isEdit: boolean) => (
     <Modal
       isOpen={isEdit ? showEditModal : showCreateModal}
-      onClose={() => (isEdit ? setShowEditModal(false) : setShowCreateModal(false))}
+      onClose={() =>
+        isEdit ? setShowEditModal(false) : setShowCreateModal(false)
+      }
       title={isEdit ? "Edit Stylist" : "Create New Stylist"}
       size="large"
     >
@@ -293,7 +305,9 @@ const StylistManagement: React.FC = () => {
             <input
               type="text"
               value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, fullName: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               required
             />
@@ -306,7 +320,9 @@ const StylistManagement: React.FC = () => {
             <input
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               required
               disabled={isEdit}
@@ -320,7 +336,9 @@ const StylistManagement: React.FC = () => {
             <input
               type="tel"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               required
             />
@@ -333,7 +351,12 @@ const StylistManagement: React.FC = () => {
             <input
               type="number"
               value={formData.experience}
-              onChange={(e) => setFormData({ ...formData, experience: parseInt(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  experience: parseInt(e.target.value) || 0,
+                })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               min="0"
             />
@@ -369,7 +392,12 @@ const StylistManagement: React.FC = () => {
             <input
               type="number"
               value={formData.commissionRate}
-              onChange={(e) => setFormData({ ...formData, commissionRate: parseFloat(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  commissionRate: parseFloat(e.target.value) || 0,
+                })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               min="0"
               max="100"
@@ -382,10 +410,15 @@ const StylistManagement: React.FC = () => {
               type="checkbox"
               id="isAvailable"
               checked={formData.isAvailable}
-              onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+              onChange={(e) =>
+                setFormData({ ...formData, isAvailable: e.target.checked })
+              }
               className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
-            <label htmlFor="isAvailable" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="isAvailable"
+              className="text-sm font-medium text-gray-700"
+            >
               Available for Bookings
             </label>
           </div>
@@ -415,7 +448,9 @@ const StylistManagement: React.FC = () => {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => (isEdit ? setShowEditModal(false) : setShowCreateModal(false))}
+            onClick={() =>
+              isEdit ? setShowEditModal(false) : setShowCreateModal(false)
+            }
           >
             Cancel
           </Button>
@@ -431,8 +466,12 @@ const StylistManagement: React.FC = () => {
     return (
       <div className="text-center py-12">
         <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
-        <p className="text-gray-600">You don't have permission to manage stylists.</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          Access Denied
+        </h2>
+        <p className="text-gray-600">
+          You don't have permission to manage stylists.
+        </p>
       </div>
     );
   }
@@ -442,10 +481,17 @@ const StylistManagement: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Stylist Management</h1>
-          <p className="text-gray-600">Manage stylists, schedules, and performance</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Stylist Management
+          </h1>
+          <p className="text-gray-600">
+            Manage stylists, schedules, and performance
+          </p>
         </div>
-        <Button onClick={handleCreateStylist} className="flex items-center space-x-2">
+        <Button
+          onClick={handleCreateStylist}
+          className="flex items-center space-x-2"
+        >
           <Plus className="w-4 h-4" />
           <span>Add Stylist</span>
         </Button>
@@ -502,7 +548,10 @@ const StylistManagement: React.FC = () => {
       ) : filteredStylists.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredStylists.map((stylist) => (
-            <Card key={stylist.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={stylist.id}
+              className="hover:shadow-md transition-shadow"
+            >
               <Card.Body>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -514,16 +563,25 @@ const StylistManagement: React.FC = () => {
                           className="w-12 h-12 rounded-full object-cover"
                         />
                       ) : (
-                        stylist.user.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)
+                        stylist.user.fullName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)
                       )}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{stylist.user.fullName}</h3>
-                      <p className="text-sm text-gray-500">{stylist.user.email}</p>
+                      <h3 className="font-semibold text-gray-900">
+                        {stylist.user.fullName}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {stylist.user.email}
+                      </p>
                       <div className="flex items-center space-x-1 mt-1">
                         <Star className="w-4 h-4 text-yellow-400 fill-current" />
                         <span className="text-sm text-gray-600">
-                          {stylist.rating?.toFixed(1) || "0.0"} ({stylist.totalBookings || 0} bookings)
+                          {Number(stylist.rating || 0).toFixed(1)} (
+                          {stylist.totalBookings || 0} bookings)
                         </span>
                       </div>
                     </div>
@@ -541,45 +599,54 @@ const StylistManagement: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Status</span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      stylist.isAvailable
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        stylist.isAvailable
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {stylist.isAvailable ? "Available" : "Unavailable"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Experience</span>
-                    <span className="font-medium">{stylist.experience || 0} years</span>
+                    <span className="font-medium">
+                      {stylist.experience || 0} years
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Commission</span>
-                    <span className="font-medium">{stylist.commissionRate || 15}%</span>
+                    <span className="font-medium">
+                      {stylist.commissionRate || 15}%
+                    </span>
                   </div>
 
-                  {stylist.specialties && stylist.specialties.length > 0 && (
-                    <div>
-                      <span className="text-sm text-gray-600">Specialties:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {stylist.specialties.slice(0, 3).map((specialty) => (
-                          <span
-                            key={specialty}
-                            className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded-full"
-                          >
-                            {specialty}
-                          </span>
-                        ))}
-                        {stylist.specialties.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                            +{stylist.specialties.length - 3} more
-                          </span>
-                        )}
+                  {Array.isArray(stylist.specialties) &&
+                    stylist.specialties.length > 0 && (
+                      <div>
+                        <span className="text-sm text-gray-600">
+                          Specialties:
+                        </span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {stylist.specialties.slice(0, 3).map((specialty) => (
+                            <span
+                              key={specialty}
+                              className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded-full"
+                            >
+                              {specialty}
+                            </span>
+                          ))}
+                          {stylist.specialties.length > 3 && (
+                            <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                              +{stylist.specialties.length - 3} more
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
 
                 <div className="flex items-center space-x-2 mt-4 pt-4 border-t border-gray-200">
@@ -598,7 +665,11 @@ const StylistManagement: React.FC = () => {
                     size="sm"
                     onClick={() => handleToggleAvailability(stylist)}
                   >
-                    {stylist.isAvailable ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
+                    {stylist.isAvailable ? (
+                      <UserX className="w-4 h-4" />
+                    ) : (
+                      <UserCheck className="w-4 h-4" />
+                    )}
                   </Button>
 
                   {isAdmin && (
@@ -620,7 +691,9 @@ const StylistManagement: React.FC = () => {
           <Card.Body>
             <div className="text-center py-12">
               <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Stylists Found</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No Stylists Found
+              </h3>
               <p className="text-gray-600 mb-6">
                 {searchTerm || filterStatus !== "all"
                   ? "No stylists match your current search and filters."

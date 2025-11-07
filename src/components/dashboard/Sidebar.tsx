@@ -56,12 +56,6 @@ const navigationItems: NavItem[] = [
     roles: ["ADMIN", "MANAGER", "STYLIST"],
   },
   {
-    name: "Manajemen Booking",
-    href: "/dashboard/bookings",
-    icon: Calendar,
-    roles: ["ADMIN", "MANAGER", "STYLIST"],
-  },
-  {
     name: "Pembayaran",
     href: "/dashboard/payments",
     icon: CreditCard,

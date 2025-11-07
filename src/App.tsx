@@ -8,45 +8,12 @@ import {
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import BookingManagement from "./pages/BookingManagement";
+import StylistManagement from "./pages/management/StylistManagement";
+import ServiceManagement from "./pages/management/ServiceManagement";
+import BookingManagementNew from "./pages/management/BookingManagement";
 import Login from "./pages/Login";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
-
-// Stylist Management placeholder
-const StylistManagement: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Manajemen Stylist</h1>
-        <p className="text-gray-600">
-          Kelola data stylist, jam kerja, dan spesialisasi
-        </p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Manajemen Stylist sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
-
-// Service Management placeholder
-const ServiceManagement: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Manajemen Layanan</h1>
-        <p className="text-gray-600">Kelola layanan, harga, dan durasi</p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Manajemen Layanan sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
 
 // Payment Management placeholder
 const PaymentManagement: React.FC = () => {
@@ -207,14 +174,32 @@ const AppContent: React.FC = () => {
             <Route index element={<Dashboard />} />
             <Route path="stylists" element={<StylistManagement />} />
             <Route path="services" element={<ServiceManagement />} />
-            <Route path="bookings" element={<BookingManagement />} />
+            <Route path="bookings" element={<BookingManagementNew />} />
             <Route path="payments" element={<PaymentManagement />} />
             <Route path="reviews" element={<ReviewManagement />} />
             <Route path="customers" element={<CustomerManagement />} />
             <Route path="promos" element={<PromoManagement />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
+
+            {/* Management Routes */}
+            <Route path="management/stylists" element={<StylistManagement />} />
+            <Route path="management/services" element={<ServiceManagement />} />
+            <Route
+              path="management/bookings"
+              element={<BookingManagementNew />}
+            />
           </Route>
+
+          {/* Legacy booking management route for compatibility */}
+          <Route
+            path="/bookings"
+            element={
+              <ProtectedRoute>
+                <BookingManagement />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

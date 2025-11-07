@@ -28,12 +28,24 @@ export interface Stylist {
   user: User;
   bio?: string;
   profileImage?: string;
-  specializations: string[];
-  experience: number;
-  rating: number;
-  totalReviews: number;
+  specialties?: string[];
+  specializations?: string[];
+  experience?: number;
+  rating?: number;
+  totalReviews?: number;
+  totalBookings?: number;
+  revenue?: string;
+  commissionRate?: number;
   isActive: boolean;
-  workingHours: WorkingHours[];
+  isAvailable: boolean;
+  workingHours?: WorkingHours[];
+  schedule?: {
+    [key: string]: {
+      isWorking: boolean;
+      startTime: string;
+      endTime: string;
+    };
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -48,6 +60,63 @@ export interface WorkingHours {
 }
 
 // Service types
+export interface Service {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  duration: number;
+  category: string;
+  isActive: boolean;
+  isPopular?: boolean;
+  requirements?: string[];
+  instructions?: string;
+  image?: string;
+  tags?: string[];
+  bookingCount?: number;
+  rating?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Booking types
+export type BookingStatus =
+  | "pending"
+  | "confirmed"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "no_show";
+
+export interface Booking {
+  id: string;
+  customerId: string;
+  stylistId: string;
+  serviceId: string;
+  customer: User;
+  stylist: Stylist;
+  service: Service;
+  appointmentDate: string;
+  appointmentTime: string;
+  status: BookingStatus;
+  notes?: string;
+  payment?: Payment;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Payment {
+  id: string;
+  bookingId: string;
+  amount: string;
+  method: string;
+  status: string;
+  paidAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Additional Service types
 export interface ServiceCategory {
   id: string;
   name: string;

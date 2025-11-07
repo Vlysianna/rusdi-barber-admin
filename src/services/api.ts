@@ -4,7 +4,7 @@ import type { ApiResponse, PaginatedResponse } from "../types";
 
 // API Configuration
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
 
 class ApiService {
   private api: AxiosInstance;
@@ -74,46 +74,76 @@ class ApiService {
     url: string,
     params?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
-    const response = await this.api.get(url, { params });
-    return response.data;
+    try {
+      const response = await this.api.get(url, { params });
+      return response.data;
+    } catch (error) {
+      console.error(`API GET ${url} failed:`, error);
+      throw error;
+    }
   }
 
   async post<T>(
     url: string,
     data?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
-    const response = await this.api.post(url, data);
-    return response.data;
+    try {
+      const response = await this.api.post(url, data);
+      return response.data;
+    } catch (error) {
+      console.error(`API POST ${url} failed:`, error);
+      throw error;
+    }
   }
 
   async put<T>(
     url: string,
     data?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
-    const response = await this.api.put(url, data);
-    return response.data;
+    try {
+      const response = await this.api.put(url, data);
+      return response.data;
+    } catch (error) {
+      console.error(`API PUT ${url} failed:`, error);
+      throw error;
+    }
   }
 
   async patch<T>(
     url: string,
     data?: Record<string, unknown>,
   ): Promise<ApiResponse<T>> {
-    const response = await this.api.patch(url, data);
-    return response.data;
+    try {
+      const response = await this.api.patch(url, data);
+      return response.data;
+    } catch (error) {
+      console.error(`API PATCH ${url} failed:`, error);
+      throw error;
+    }
   }
 
   async delete<T>(url: string): Promise<ApiResponse<T>> {
-    const response = await this.api.delete(url);
-    return response.data;
+    try {
+      const response = await this.api.delete(url);
+      return response.data;
+    } catch (error) {
+      console.error(`API DELETE ${url} failed:`, error);
+      throw error;
+    }
   }
 
   async upload<T>(url: string, formData: FormData): Promise<ApiResponse<T>> {
-    const response = await this.api.post(url, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
+    try {
+      const response = await this.api.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`API UPLOAD ${url} failed:`, error);
+      throw error;
+    }
   }
 
   // Paginated requests
@@ -121,8 +151,18 @@ class ApiService {
     url: string,
     params?: Record<string, unknown>,
   ): Promise<PaginatedResponse<T>> {
-    const response = await this.api.get(url, { params });
-    return response.data.data;
+    try {
+      const response = await this.api.get(url, { params });
+      return response.data.data;
+    } catch (error) {
+      console.error(`API GET PAGINATED ${url} failed:`, error);
+      throw error;
+    }
+  }
+
+  // Expose axios instance for direct access when needed
+  get api() {
+    return this.api;
   }
 }
 
