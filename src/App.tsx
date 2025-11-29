@@ -1,98 +1,29 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import DashboardLayout from "./components/dashboard/DashboardLayout";
-import Dashboard from "./pages/Dashboard";
-import BookingManagement from "./pages/BookingManagement";
-import StylistManagement from "./pages/management/StylistManagement";
-import ServiceManagement from "./pages/management/ServiceManagement";
-import BookingManagementNew from "./pages/management/BookingManagement";
-import Login from "./pages/Login";
-import ErrorBoundary from "./components/ui/ErrorBoundary";
-import { AuthProvider, useAuth } from "./hooks/useAuth";
-import Pembayaran from "./pages/pembayaran";
-import UlasanRating from "./pages/ulasan rating";
-import Pelanggan from "./pages/pelanggan";
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './lib/hooks/useAuth';
+import AdminLayout from './layouts/AdminLayout';
+import Login from './features/auth/Login';
+import Dashboard from './features/dashboard/Dashboard';
+import BookingList from './features/bookings/BookingList';
+import BookingDetail from './features/bookings/BookingDetail';
+import ServiceList from './features/services/ServiceList';
+import StylistList from './features/stylists/StylistList';
+import PaymentList from './features/payments/PaymentList';
+import CustomerList from './features/customers/CustomerList';
+import ReviewList from './features/reviews/ReviewList';
+import { Loading } from './shared/components';
 
-// Payment Management is now implemented as Pembayaran component
+// Placeholder components (will be created later)
+const Settings = () => <div className="text-center py-12"><h2 className="text-2xl font-bold text-gray-900">Settings Page</h2><p className="text-gray-500 mt-2">Coming Soon</p></div>;
 
-// Review Management is now implemented as UlasanRating component
-
-// Customer Management is now implemented as Pelanggan component
-
-// Promo Management placeholder
-const PromoManagement: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Manajemen Promo & Loyalty
-        </h1>
-        <p className="text-gray-600">
-          Kelola promo code, loyalty points, dan program reward
-        </p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Manajemen Promo sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
-
-// Analytics placeholder
-const Analytics: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Laporan & Analitik</h1>
-        <p className="text-gray-600">
-          Analisis performa bisnis dan laporan keuangan
-        </p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Laporan & Analitik sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
-
-// Settings placeholder
-const Settings: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Pengaturan</h1>
-        <p className="text-gray-600">
-          Konfigurasi sistem dan pengaturan aplikasi
-        </p>
-      </div>
-      <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
-        <p className="text-gray-500">
-          Halaman Pengaturan sedang dalam pengembangan
-        </p>
-      </div>
-    </div>
-  );
-};
-
-// Protected Route component
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+// Protected Route wrapper
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <Loading size="lg" text="Memuat..." />
       </div>
     );
   }
@@ -104,84 +35,64 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   return <>{children}</>;
 };
 
-const AppContent: React.FC = () => {
-  return (
-    <Router>
-      <div className="App">
-        <Routes>
-          {/* Login Route */}
-          <Route path="/login" element={<Login />} />
+// Public Route (redirect to dashboard if authenticated)
+const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
 
-          {/* Dashboard Routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Dashboard />} />
-            <Route path="stylists" element={<StylistManagement />} />
-            <Route path="services" element={<ServiceManagement />} />
-            <Route path="bookings" element={<BookingManagementNew />} />
-            <Route path="payments" element={<Pembayaran />} />
-            <Route path="reviews" element={<UlasanRating />} />
-            <Route path="customers" element={<Pelanggan />} />
-            <Route path="promos" element={<PromoManagement />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="settings" element={<Settings />} />
-
-            {/* Management Routes */}
-            <Route path="management/stylists" element={<StylistManagement />} />
-            <Route path="management/services" element={<ServiceManagement />} />
-            <Route
-              path="management/bookings"
-              element={<BookingManagementNew />}
-            />
-          </Route>
-
-          {/* Legacy booking management route for compatibility */}
-          <Route
-            path="/bookings"
-            element={
-              <ProtectedRoute>
-                <BookingManagement />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-          {/* 404 Route */}
-          <Route
-            path="*"
-            element={
-              <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
-                <div className="text-center">
-                  <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-                  <p className="text-gray-600 mb-4">Halaman tidak ditemukan</p>
-                  <a href="/dashboard" className="btn btn-primary">
-                    Kembali ke Dashboard
-                  </a>
-                </div>
-              </div>
-            }
-          />
-        </Routes>
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loading size="lg" text="Memuat..." />
       </div>
-    </Router>
-  );
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 const App: React.FC = () => {
   return (
-    <ErrorBoundary>
+    <BrowserRouter>
       <AuthProvider>
-        <AppContent />
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+
+          {/* Protected Routes */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="bookings" element={<BookingList />} />
+            <Route path="bookings/:id" element={<BookingDetail />} />
+            <Route path="services" element={<ServiceList />} />
+            <Route path="stylists" element={<StylistList />} />
+            <Route path="payments" element={<PaymentList />} />
+            <Route path="customers" element={<CustomerList />} />
+            <Route path="reviews" element={<ReviewList />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AuthProvider>
-    </ErrorBoundary>
+    </BrowserRouter>
   );
 };
 
