@@ -225,7 +225,7 @@ const BookingDetail: React.FC = () => {
                   </p>
                 </div>
               </div>
-              {booking.stylist?.specialties && booking.stylist.specialties.length > 0 && (
+              {booking.stylist?.specialties && Array.isArray(booking.stylist.specialties) && booking.stylist.specialties.length > 0 && (
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Spesialisasi:</p>
                   <div className="flex flex-wrap gap-2">
