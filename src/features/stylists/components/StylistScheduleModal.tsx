@@ -107,7 +107,8 @@ const StylistScheduleModal: React.FC<StylistScheduleModalProps> = ({
       const checked = (e.target as HTMLInputElement).checked;
       setFormData({ ...formData, [name]: checked });
     } else {
-      setFormData({ ...formData, [name]: value });
+      // Ensure value is never undefined to prevent controlled/uncontrolled input warning
+      setFormData({ ...formData, [name]: value ?? '' });
     }
   };
 

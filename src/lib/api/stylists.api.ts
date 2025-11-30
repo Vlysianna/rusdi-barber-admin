@@ -28,6 +28,17 @@ export interface Stylist {
   updatedAt: string;
 }
 
+export interface StylistSchedule {
+  id: string;
+  stylistId: string;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+  isAvailable: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CreateStylistRequest {
   userId: string;
   specialties: string[];
@@ -50,6 +61,19 @@ export interface StylistFilters {
   isAvailable?: boolean;
   specialty?: string;
   search?: string;
+}
+
+export interface AddScheduleRequest {
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+  isAvailable?: boolean;
+}
+
+export interface UpdateScheduleRequest {
+  startTime?: string;
+  endTime?: string;
+  isAvailable?: boolean;
 }
 
 class StylistsAPI {
@@ -77,8 +101,21 @@ class StylistsAPI {
     return apiClient.patch<Stylist>(`/stylists/${id}/toggle-availability`);
   }
 
-  async getSchedule(id: string, date: string): Promise<ApiResponse<any>> {
-    return apiClient.get(`/stylists/${id}/schedule`, { params: { date } });
+  // Schedule management
+  async getSchedule(id: string): Promise<ApiResponse<StylistSchedule[]>> {
+    return apiClient.get<StylistSchedule[]>(`/stylists/${id}/schedules`);
+  }
+
+  async addSchedule(id: string, data: AddScheduleRequest): Promise<ApiResponse<StylistSchedule>> {
+    return apiClient.post<StylistSchedule>(`/stylists/${id}/schedules`, data);
+  }
+
+  async updateSchedule(id: string, scheduleId: string, data: UpdateScheduleRequest): Promise<ApiResponse<StylistSchedule>> {
+    return apiClient.put<StylistSchedule>(`/stylists/${id}/schedules/${scheduleId}`, data);
+  }
+
+  async deleteSchedule(id: string, scheduleId: string): Promise<ApiResponse> {
+    return apiClient.delete(`/stylists/${id}/schedules/${scheduleId}`);
   }
 }
 

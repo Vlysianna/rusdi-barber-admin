@@ -49,11 +49,22 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
     setError(null);
 
     try {
+      // Clean up formData - remove undefined/empty image
+      const submitData = {
+        ...formData,
+        image: formData.image || undefined,
+      };
+      
+      // Remove image key if it's undefined/empty to avoid validation issues
+      if (!submitData.image) {
+        delete submitData.image;
+      }
+
       let response;
       if (service) {
-        response = await servicesAPI.update(service.id, formData);
+        response = await servicesAPI.update(service.id, submitData);
       } else {
-        response = await servicesAPI.create(formData);
+        response = await servicesAPI.create(submitData);
       }
 
       if (response.success) {
@@ -61,9 +72,10 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
       } else {
         setError(response.message || 'Gagal menyimpan layanan');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Submit error:', err);
-      setError('Terjadi kesalahan saat menyimpan layanan');
+      const errorMessage = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan layanan';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
