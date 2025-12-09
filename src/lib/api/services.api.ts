@@ -68,6 +68,10 @@ class ServicesAPI {
   async toggleActive(id: string): Promise<ApiResponse<Service>> {
     return apiClient.patch<Service>(`/services/${id}/toggle-active`);
   }
+
+  async uploadImage(file: File): Promise<ApiResponse<{ url: string }>> {
+    return apiClient.uploadFile<{ url: string }>('/upload/image', file);
+  }
 }
 
 export const servicesAPI = new ServicesAPI();

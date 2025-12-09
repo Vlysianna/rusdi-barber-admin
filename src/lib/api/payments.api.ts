@@ -27,7 +27,13 @@ export interface PaymentFilters {
 
 class PaymentsAPI {
   async getAll(filters?: PaymentFilters): Promise<PaginatedResponse<Payment>> {
-    return apiClient.get<Payment[]>('/payments', { params: filters });
+    try {
+      const responseBody = await apiClient.get<PaginatedResponse<Payment>>('/payments', { params: filters });
+      return responseBody as PaginatedResponse<Payment>;
+    } catch (error) {
+      console.error('Payments fetch error:', error);
+      throw error;
+    }
   }
 
   async getById(id: string): Promise<ApiResponse<Payment>> {

@@ -33,15 +33,18 @@ export interface DashboardFilters {
 
 class DashboardAPI {
   async getStats(filters?: DashboardFilters): Promise<ApiResponse<DashboardStats>> {
-    return apiClient.get<DashboardStats>('/dashboard/stats', { params: filters });
+    const responseBody = await apiClient.get<ApiResponse<DashboardStats>>('/dashboard/stats', { params: filters });
+    return responseBody as ApiResponse<DashboardStats>;
   }
 
   async getRevenueTrend(period: 'week' | 'month' | 'year'): Promise<ApiResponse<Array<{ date: string; amount: number }>>> {
-    return apiClient.get(`/dashboard/revenue-trend`, { params: { period } });
+    const responseBody = await apiClient.get(`/dashboard/revenue-trend`, { params: { period } });
+    return responseBody;
   }
 
   async getBookingsTrend(period: 'week' | 'month' | 'year'): Promise<ApiResponse<Array<{ date: string; count: number }>>> {
-    return apiClient.get(`/dashboard/bookings-trend`, { params: { period } });
+    const responseBody = await apiClient.get(`/dashboard/bookings-trend`, { params: { period } });
+    return responseBody;
   }
 }
 

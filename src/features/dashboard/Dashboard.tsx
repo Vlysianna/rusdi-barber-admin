@@ -32,8 +32,10 @@ const Dashboard: React.FC = () => {
       const response = await dashboardAPI.getStats(filters);
       
       if (response.success && response.data) {
+        console.log('Dashboard data:', response.data);
         setStats(response.data);
       } else {
+        console.error('Dashboard response:', response);
         setError(response.message || 'Gagal memuat data dashboard');
       }
     } catch (err) {

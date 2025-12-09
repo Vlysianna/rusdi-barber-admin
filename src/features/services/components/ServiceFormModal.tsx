@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Upload } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Upload, Image, Trash2 } from 'lucide-react';
 import { servicesAPI, Service, CreateServiceRequest } from '../../../lib/api';
 import { Button, Loading } from '../../../shared/components';
 
@@ -16,6 +16,9 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<CreateServiceRequest>({
     name: '',
@@ -40,8 +43,43 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
         isPopular: service.isPopular,
         image: service.image,
       });
+      if (service.image) {
+        setImagePreview(service.image);
+      }
     }
   }, [service]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validasi tipe file
+      if (!file.type.startsWith('image/')) {
+        setError('File harus berupa gambar (JPG, PNG, GIF, dll)');
+        return;
+      }
+      // Validasi ukuran file (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Ukuran gambar maksimal 5MB');
+        return;
+      }
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setError(null);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setFormData({ ...formData, image: undefined });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,10 +87,22 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
     setError(null);
 
     try {
-      // Clean up formData - remove undefined/empty image
+      let imageUrl = formData.image;
+
+      // Upload gambar jika ada file baru
+      if (imageFile) {
+        const uploadResponse = await servicesAPI.uploadImage(imageFile);
+        if (uploadResponse.success && uploadResponse.data?.url) {
+          imageUrl = uploadResponse.data.url;
+        } else {
+          throw new Error('Gagal mengupload gambar');
+        }
+      }
+
+      // Clean up formData
       const submitData = {
         ...formData,
-        image: formData.image || undefined,
+        image: imageUrl || undefined,
       };
       
       // Remove image key if it's undefined/empty to avoid validation issues
@@ -212,20 +262,57 @@ const ServiceFormModal: React.FC<ServiceFormModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL Gambar (Opsional)
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Gambar Layanan (Opsional)
               </label>
+              
+              {/* Image Preview */}
+              {imagePreview ? (
+                <div className="relative mb-3">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                >
+                  <Upload className="w-10 h-10 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600">Klik untuk upload gambar</p>
+                  <p className="text-xs text-gray-400 mt-1">JPG, PNG, GIF (Maks. 5MB)</p>
+                </div>
+              )}
+              
+              {/* Hidden File Input */}
               <input
-                type="url"
-                name="image"
-                value={formData.image || ''}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Masukkan URL gambar atau kosongkan untuk menggunakan gambar default
-              </p>
+              
+              {/* Change Image Button */}
+              {imagePreview && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-2 text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                >
+                  <Image className="w-4 h-4" />
+                  Ganti Gambar
+                </button>
+              )}
             </div>
           </div>
 

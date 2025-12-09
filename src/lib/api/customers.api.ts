@@ -25,17 +25,20 @@ export interface CustomerFilters {
 
 class CustomersAPI {
   async getAll(filters?: CustomerFilters): Promise<PaginatedResponse<Customer>> {
-    return apiClient.get<Customer[]>('/users', { 
+    const responseBody = await apiClient.get<PaginatedResponse<Customer>>('/users', { 
       params: { ...filters, role: 'customer' } 
     });
+    return responseBody as PaginatedResponse<Customer>;
   }
 
   async getById(id: string): Promise<ApiResponse<Customer>> {
-    return apiClient.get<Customer>(`/users/${id}`);
+    const responseBody = await apiClient.get<ApiResponse<Customer>>(`/users/${id}`);
+    return responseBody as ApiResponse<Customer>;
   }
 
   async getBookingHistory(id: string, page?: number, limit?: number): Promise<PaginatedResponse<any>> {
-    return apiClient.get(`/users/${id}/bookings`, { params: { page, limit } });
+    const responseBody = await apiClient.get(`/users/${id}/bookings`, { params: { page, limit } });
+    return responseBody;
   }
 }
 

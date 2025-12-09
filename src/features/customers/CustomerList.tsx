@@ -44,19 +44,20 @@ const CustomerList: React.FC = () => {
       if (response.success && response.data) {
         setCustomers(response.data);
         
-        if (response.pagination) {
-          setTotalPages(response.pagination.totalPages);
-          setTotalItems(response.pagination.total);
-          setCurrentPage(response.pagination.page);
+        // Backend returns 'meta' not 'pagination'
+        if ((response as any).meta) {
+          setTotalPages((response as any).meta.totalPages);
+          setTotalItems((response as any).meta.total);
+          setCurrentPage((response as any).meta.page);
         }
 
         // Calculate stats
         const totalBookings = response.data.reduce((sum, c) => sum + (c.totalBookings || 0), 0);
-        const totalRevenue = response.data.reduce((sum, c) => sum + (c.totalSpent || 0), 0);
+        const totalRevenue = response.data.reduce((sum, c) => sum + (Number(c.totalSpent) || 0), 0);
         const avgSpending = response.data.length > 0 ? totalRevenue / response.data.length : 0;
 
         setStats({
-          totalCustomers: totalItems,
+          totalCustomers: (response as any).meta?.total || response.data.length,
           totalBookings,
           totalRevenue,
           avgSpending,

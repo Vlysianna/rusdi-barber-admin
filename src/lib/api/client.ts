@@ -16,6 +16,14 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     total: number;
     totalPages: number;
   };
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage?: boolean;
+    hasPrevPage?: boolean;
+  };
 }
 
 class ApiClient {
@@ -56,7 +64,7 @@ class ApiClient {
     // Response interceptor
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => {
+      async (error: AxiosError<any>) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         // Handle 401 Unauthorized
@@ -106,6 +114,8 @@ class ApiClient {
           }
         }
 
+        // Return error response as-is, so error.response.data contains the API error message
+        // This allows the frontend to handle API errors properly
         return Promise.reject(error);
       }
     );
@@ -163,6 +173,13 @@ class ApiClient {
       },
     });
     return response.data;
+  }
+
+  // Upload single file
+  async uploadFile<T = any>(url: string, file: File, fieldName: string = 'file'): Promise<ApiResponse<T>> {
+    const formData = new FormData();
+    formData.append(fieldName, file);
+    return this.upload<T>(url, formData);
   }
 
   // Get raw axios instance for custom operations

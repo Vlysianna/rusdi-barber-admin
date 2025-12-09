@@ -45,25 +45,26 @@ const PaymentList: React.FC = () => {
 
       const response = await paymentsAPI.getAll(filters);
       
-      if (response.success && response.data) {
+      if (response.success && Array.isArray(response.data)) {
         setPayments(response.data);
         
-        if (response.pagination) {
-          setTotalPages(response.pagination.totalPages);
-          setTotalItems(response.pagination.total);
-          setCurrentPage(response.pagination.page);
+        // Backend returns 'meta' not 'pagination'
+        if ((response as any).meta) {
+          setTotalPages((response as any).meta.totalPages);
+          setTotalItems((response as any).meta.total);
+          setCurrentPage((response as any).meta.page);
         }
 
         // Calculate stats
         const totalRevenue = response.data
-          .filter(p => p.status === 'completed')
-          .reduce((sum, p) => sum + p.amount, 0);
+          .filter(p => p.status === 'paid')
+          .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
         
         const pendingAmount = response.data
           .filter(p => p.status === 'pending')
-          .reduce((sum, p) => sum + p.amount, 0);
+          .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
 
-        const completedCount = response.data.filter(p => p.status === 'completed').length;
+        const completedCount = response.data.filter(p => p.status === 'paid').length;
         const refundedCount = response.data.filter(p => p.status === 'refunded').length;
 
         setStats({
@@ -95,7 +96,7 @@ const PaymentList: React.FC = () => {
     if (!confirm('Yakin ingin melakukan refund pembayaran ini?')) return;
 
     try {
-      const response = await paymentsAPI.refund(id);
+      const response = await paymentsAPI.refund(id, 'Refund requested by admin');
       if (response.success) {
         loadPayments();
       } else {

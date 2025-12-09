@@ -24,8 +24,16 @@ const Login: React.FC = () => {
       setLoading(true);
       await login({ email, password });
       navigate('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login gagal');
+    } catch (err: any) {
+      // Handle API error response
+      if (err?.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Login gagal');
+      }
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }

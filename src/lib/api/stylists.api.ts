@@ -40,11 +40,26 @@ export interface StylistSchedule {
 }
 
 export interface CreateStylistRequest {
-  userId: string;
-  specialties: string[];
-  experience: number;
-  commissionRate: number;
+  // Option 1: Use existing user
+  userId?: string;
+  // Option 2: Create new user
+  email?: string;
+  password?: string;
+  fullName?: string;
+  phone?: string;
+  // Stylist data
+  specialties?: string[];
+  experience?: number;
+  commissionRate?: number;
   bio?: string;
+  schedule?: {
+    [key: string]: {
+      isWorking: boolean;
+      startTime: string;
+      endTime: string;
+    };
+  };
+  isAvailable?: boolean;
 }
 
 export interface UpdateStylistRequest {
@@ -53,6 +68,13 @@ export interface UpdateStylistRequest {
   commissionRate?: number;
   isAvailable?: boolean;
   bio?: string;
+  schedule?: {
+    [key: string]: {
+      isWorking: boolean;
+      startTime: string;
+      endTime: string;
+    };
+  };
 }
 
 export interface StylistFilters {
